@@ -17,10 +17,22 @@ class AnimalController extends Controller
     public function index(Request $request)
     {
         // 設定預設值
-        $limit = $request->limit ?? 3; // 未設定預設值時為10
+        $limit = $request->limit ?? 5; // 未設定預設值時為5
 
-            // 使用 Model orderBy 方法加入 sql 語法排序條件，依照 ID 由大到小排序
-        $animals = Animal::orderBy('id', 'desc')
+        // 建立查詢建構器，分段的方式撰寫sql語句
+        $query = Animal::query();
+
+        // 篩選欄位條件邏輯，如果有設定filters參數
+        if (isset($request->filters)) {
+            $filters = explode(',', $request->filters);
+            foreach ($filters as $key => $filter) {
+                list($key, $value) = explode(':', $filter);
+                $query->where($key, 'like', "%$value%");
+            }
+        }
+
+        // 使用 Model orderBy 方法加入 sql 語法排序條件，依照 ID 由大到小排序
+        $animals = $query->orderBy('id', 'desc')
             ->paginate($limit) // 使用分頁方法，最多回傳$limit筆資料
             ->appends($request->query());
 
