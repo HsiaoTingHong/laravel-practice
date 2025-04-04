@@ -39,7 +39,7 @@ class AnimalController extends Controller
     {
         // Animal Model 有 create 寫好的方法，把請求的內容，用all方法轉為陣列，傳入 create 方法中。
         $animal = Animal::create($request->all());
-        
+
         // 使用 refresh 方法再查詢一次資料庫，得到該筆的完整資料
         $animal = $animal->refresh();
 
@@ -87,8 +87,12 @@ class AnimalController extends Controller
      * @param  \App\Models\Animal  $animal
      * @return \Illuminate\Http\Response
      */
+    // 路由有設定 animal 變數，這裡設定它是 Animal 模型，所以會自動找出該ID的實體物件
     public function destroy(Animal $animal)
     {
-        //
+        // 把這個實體物件刪除
+        $animal->delete();
+        // 回傳 null 並且給予 204 狀態碼
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }
