@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache; // 使用 Laravel 的 Cache Facades 功能
 
 class AnimalController extends Controller
 {
@@ -16,6 +17,28 @@ class AnimalController extends Controller
      */
     public function index(Request $request)
     {
+        // 使用網址設定為快取檔案名稱
+        // 取得網址
+        $url = $request->url();
+
+        // 取得 query 的參數，例如?limit=5&page=2
+        $queryParams = $request->query();
+
+        // 使用參數第一個英文字將參數順序排序
+        ksort($queryParams);
+
+        // 用 http_build_query 將查詢參數轉為字串
+        $queryString = http_build_query($queryParams);
+
+        // 組合完整網址
+        $fullUrl = "{$url}?{$queryString}";
+
+        // 使用 Laravel 快取方法檢查是否有快取紀錄
+        if (Cache::has($fullUrl)) {
+            // 使用 return 直接回傳快取資料，不做其他程式邏輯
+            return Cache::get($fullUrl);
+        }
+
         // 設定預設值
         $limit = $request->limit ?? 5; // 未設定預設值時為5
 
@@ -49,7 +72,11 @@ class AnimalController extends Controller
         $animals = $query->paginate($limit) // 使用分頁方法，最多回傳$limit筆資料
             ->appends($request->query());
 
-        return response($animals, Response::HTTP_OK);
+        // 沒有快取紀錄記住資料，並設定 60 秒過期，快取名稱使用網址命名
+        // 快取未過期前都不會使用到資料庫設備資源
+        return Cache::remember($fullUrl, 60, function () use ($animals) {
+            return response($animals, Response::HTTP_OK);
+        });
     }
 
     /**
