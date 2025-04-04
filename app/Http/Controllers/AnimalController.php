@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache; // 使用 Laravel 的 Cache Facades 功能
 class AnimalController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource. 查詢資料列表
      *
      * @return \Illuminate\Http\Response
      */
@@ -90,13 +90,30 @@ class AnimalController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage. 新增資料
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) // 找到 store 方法
     {
+        // debug zh_TW
+        // dd(app()->getLocale()); // "zh_TW" // app\Http\Controllers\AnimalController.php:100
+        // return __('validation.required'); // validation.required
+        // $translations = trans('validation');
+        // dd($translations);
+
+        // 資料驗證
+        $this->validate($request, [
+            'type_id' => 'nullable|integer', // 允許 null 或整數
+            'name' => 'required|string|max:255', // 必填文字最多 255 字元
+            'birthday' => 'nullable|date', // 允許 null 或日期格式，使用 PHP strtotime 檢查傳入的日期字串
+            'area' => 'nullable|string|max:255', // 允許 null 或文字最多 255 字元
+            'fix' => 'required|boolean', // 必填並且為布林值
+            'description' => 'nullable', // 允許 null
+            'personality' => 'nullable' // 允許 null
+        ]);
+
         // Animal Model 有 create 寫好的方法，把請求的內容，用all方法轉為陣列，傳入 create 方法中。
         $animal = Animal::create($request->all());
 
@@ -108,7 +125,7 @@ class AnimalController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource. 查詢單一資料
      *
      * @param  \App\Models\Animal  $animal
      * @return \Illuminate\Http\Response
@@ -131,7 +148,7 @@ class AnimalController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage. 修改資料
      *
      * @param  \Illuminate\Http\Request  $request 預計修改的內容
      * @param  \App\Models\Animal  $animal 要修改哪一個 ID 的資料
@@ -139,6 +156,17 @@ class AnimalController extends Controller
      */
     public function update(Request $request, Animal $animal)
     {
+        // 資料驗證
+        $this->validate($request, [
+            'type_id' => 'nullable|integer',
+            'name' => 'required|string|max:255',
+            'birthday' => 'nullable|date',
+            'area' => 'nullable|string|max:255',
+            'fix' => 'required|boolean',
+            'description' => 'nullable',
+            'personality' => 'nullable'
+        ]);
+
         // 資料表找到的資料，使用 Laravel Model 的 update() 方法更新資料
         $animal->update($request->all());
 
@@ -147,7 +175,7 @@ class AnimalController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage. 刪除資料
      *
      * @param  \App\Models\Animal  $animal
      * @return \Illuminate\Http\Response
