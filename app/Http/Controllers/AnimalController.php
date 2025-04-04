@@ -72,13 +72,17 @@ class AnimalController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Animal  $animal
+     * @param  \Illuminate\Http\Request  $request 預計修改的內容
+     * @param  \App\Models\Animal  $animal 要修改哪一個 ID 的資料
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Animal $animal)
     {
-        //
+        // 資料表找到的資料，使用 Laravel Model 的 update() 方法更新資料
+        $animal->update($request->all());
+
+        // 回傳資料，並給予 200 HTTP 狀態碼代表 OK
+        return response($animal, Response::HTTP_OK);
     }
 
     /**
