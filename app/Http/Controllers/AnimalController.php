@@ -16,7 +16,9 @@ class AnimalController extends Controller
      */
     public function index()
     {
-        //
+        // 查詢清單
+        $animals = Animal::get();
+        return response(['animals' => $animals], Response::HTTP_OK);
     }
 
     /**
@@ -55,7 +57,8 @@ class AnimalController extends Controller
      */
     public function show(Animal $animal)
     {
-        //
+        // 查詢單一資料
+        return response($animal, Response::HTTP_OK);
     }
 
     /**
