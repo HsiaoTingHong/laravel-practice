@@ -6,9 +6,15 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
+use App\Traits\ApiResponseTrait; // 引用特徵
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
+
+    use ApiResponseTrait; // 使用特徵，類似將Trait撰寫的方法貼到這個類別中
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -58,12 +64,28 @@ class Handler extends ExceptionHandler
 
         // 錯誤處理
         if ($request->expectsJson()) {
+            // 1. ModelNotFoundException 找不到資源
             if ($exception instanceof ModelNotFoundException) {
-                return response()->json(
-                    [
-                        'error' => '找不到這筆資料'
-                    ],
+                // 呼叫 errorResponse 方法
+                return $this->errorResponse(
+                    '找不到這筆資料',
                     Response::HTTP_NOT_FOUND
+                );
+            }
+            // 2. NotFoundHttpException 網址輸入錯誤
+            if ($exception instanceof NotFoundHttpException) {
+                // 呼叫 errorResponse 方法
+                return $this->errorResponse(
+                    '無法找到此網址',
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+            // 3. MethodNotAllowedHttpException 網址不允許該請求動詞
+            if ($exception instanceof MethodNotAllowedHttpException) {
+                // 呼叫 errorResponse 方法
+                return $this->errorResponse(
+                    $exception->getMessage(), // 回傳例外內的訊息
+                    Response::HTTP_METHOD_NOT_ALLOWED
                 );
             }
         }
