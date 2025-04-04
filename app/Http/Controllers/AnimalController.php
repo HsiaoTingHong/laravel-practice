@@ -14,11 +14,17 @@ class AnimalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // 查詢清單
-        $animals = Animal::get();
-        return response(['animals' => $animals], Response::HTTP_OK);
+        // 設定預設值
+        $limit = $request->limit ?? 3; // 未設定預設值時為10
+
+            // 使用 Model orderBy 方法加入 sql 語法排序條件，依照 ID 由大到小排序
+        $animals = Animal::orderBy('id', 'desc')
+            ->paginate($limit) // 使用分頁方法，最多回傳$limit筆資料
+            ->appends($request->query());
+
+        return response($animals, Response::HTTP_OK);
     }
 
     /**
