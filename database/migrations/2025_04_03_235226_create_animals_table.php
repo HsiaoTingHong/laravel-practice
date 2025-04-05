@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('fix')->default(false)->comment('結紮情形');
             $table->text('description')->nullable()->comment('簡單敘述');
             $table->text('personality')->nullable()->comment('動物個性');
+            $table->text('user_id')->nullable()->comment('會員ID');
             $table->softDeletes();
             $table->timestamps();
         });

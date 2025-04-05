@@ -25,6 +25,7 @@ class Animal extends Model
         'fix',
         'description',
         'personality',
+        'user_id',
     ];
 
     // 為什麼要設定 $fillable? 因為像AnimalController 這樣的撰寫方式，把整個使用者請求的陣列直接用create 的方法寫入，會有安全性的問題，所以必須用 $fillable來限制哪些欄位可以被批量寫入。
