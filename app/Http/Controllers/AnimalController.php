@@ -43,7 +43,15 @@ class AnimalController extends Controller
         $limit = $request->limit ?? 5; // 未設定預設值時為5
 
         // 建立查詢建構器，分段的方式撰寫sql語句
+        // 1 - 加入關聯查詢，希望明確地建立查詢建構器實例並逐步添加條件，可以保留 ::query()
         $query = Animal::query();
+        // $query->with('type');
+
+        // 2 - 加入關聯查詢，直接使用模型方法
+        // $query = Animal::with('type');
+
+        // 3 - 查詢 type 為 1 的所有動物資料
+        // $query = Animal::with('type')->where('type_id', 1);
 
         // 篩選欄位條件邏輯，如果有設定filters參數
         if (isset($request->filters)) {
@@ -134,6 +142,8 @@ class AnimalController extends Controller
     {
         // 查詢單一資料
         return response($animal, Response::HTTP_OK);
+        // 關聯查詢: 查詢動物時，一併帶出分類資料
+        // $animal = Animal::with('type')->find('1');
     }
 
     /**

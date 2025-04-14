@@ -19,8 +19,12 @@ class TypeController extends Controller
         // 分類資料量少直接全部輸出
         $types = Type::get();
 
+        // 關聯查詢: 查詢狗狗分類中的所有動物
+        // $animals = Type::find('1')->animals;
+
         return response([
             'data' => $types // 輸出使用 data 包住
+            // 'data' => $animals // 輸出使用 data 包住
         ], Response::HTTP_OK);
     }
 
