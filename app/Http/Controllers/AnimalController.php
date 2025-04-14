@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AnimalResource;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -129,7 +130,12 @@ class AnimalController extends Controller
         $animal = $animal->refresh();
 
         // 回傳 animal 產生出來的實體物件資料，第二個參數設定狀態碼，可以直接寫 201 表示創建成功的狀態螞或用下面 Response 功能 
-        return response($animal, Response::HTTP_CREATED);
+        // return response($animal, Response::HTTP_CREATED);
+
+        // 使用 Resource 統一輸出格式 - 單一動物格式
+        return (new AnimalResource($animal))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -141,9 +147,16 @@ class AnimalController extends Controller
     public function show(Animal $animal)
     {
         // 查詢單一資料
-        return response($animal, Response::HTTP_OK);
+
         // 關聯查詢: 查詢動物時，一併帶出分類資料
         // $animal = Animal::with('type')->find('1');
+
+        // return response($animal, Response::HTTP_OK);
+
+        // 使用 Resource 統一輸出格式 - 單一動物格式
+        return (new AnimalResource($animal))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -181,7 +194,12 @@ class AnimalController extends Controller
         $animal->update($request->all());
 
         // 回傳資料，並給予 200 HTTP 狀態碼代表 OK
-        return response($animal, Response::HTTP_OK);
+        // return response($animal, Response::HTTP_OK);
+
+        // 使用 Resource 統一輸出格式 - 單一動物格式
+        return (new AnimalResource($animal))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
