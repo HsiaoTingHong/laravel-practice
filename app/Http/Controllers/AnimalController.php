@@ -119,7 +119,7 @@ class AnimalController extends Controller
 
         // 資料驗證
         $this->validate($request, [
-            'type_id' => 'nullable|integer', // 允許 null 或整數
+            'type_id' => 'nullable|exists:types,id', // 輸入的 type_id 必須存在 types 資料表中
             'name' => 'required|string|max:255', // 必填文字最多 255 字元
             'birthday' => 'nullable|date', // 允許 null 或日期格式，使用 PHP strtotime 檢查傳入的日期字串
             'area' => 'nullable|string|max:255', // 允許 null 或文字最多 255 字元
@@ -186,7 +186,7 @@ class AnimalController extends Controller
     {
         // 資料驗證
         $this->validate($request, [
-            'type_id' => 'nullable|integer',
+            'type_id' => 'nullable|exists:types,id', // 輸入的 type_id 必須存在 types 資料表中
             'name' => 'required|string|max:255',
             'birthday' => 'nullable|date',
             'area' => 'nullable|string|max:255',
