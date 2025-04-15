@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Animal;
 use App\Models\User;
+use App\Models\Type;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -33,6 +34,12 @@ class DatabaseSeeder extends Seeder
 
         // 清空 users 資料表 ID 歸零
         User::truncate();
+
+        // 清空 types 資料表 ID 歸零
+        Type::truncate();
+
+        // 先產生 5 筆 Type 測試資料
+        Type::factory(5)->create();
 
         // 建立 5 筆會員測試資料
         User::factory(5)->create();

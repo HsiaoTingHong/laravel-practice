@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Animal;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +21,8 @@ class AnimalFactory extends Factory
     public function definition()
     {
         return [
-            // numberBetween 隨機產生範圍1到3之間的整數
-            'type_id' => $this->faker->numberBetween(1, 3),
+            // type_id 隨機配對一個分類資料
+            'type_id' => Type::all()->random()->id,
             'name' => $this->faker->name, // 隨機名稱
             'birthday' => $this->faker->date(), // 隨機日期
             'area' => $this->faker->city, // 隨機城市名稱
