@@ -14,6 +14,7 @@ class AnimalResource extends JsonResource
      */
     public function toArray($request)
     {
+        // 處理單一動物格式
         return [
             'id' => $this->id,
             'type_id' => $this->type_id,

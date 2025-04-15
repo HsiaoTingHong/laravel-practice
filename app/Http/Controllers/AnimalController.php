@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AnimalResource;
+use App\Http\Resources\AnimalCollection;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +46,8 @@ class AnimalController extends Controller
 
         // 建立查詢建構器，分段的方式撰寫sql語句
         // 1 - 加入關聯查詢，希望明確地建立查詢建構器實例並逐步添加條件，可以保留 ::query()
-        $query = Animal::query();
+        // 加上預處理 with 方法並傳入字串 type 對應到 Animal Model 設定好的關聯方法，使用預處理可以減少與資料庫的溝通
+        $query = Animal::query()->with('type');
         // $query->with('type');
 
         // 2 - 加入關聯查詢，直接使用模型方法
@@ -75,7 +77,7 @@ class AnimalController extends Controller
         } else {
             // 如果沒有設定排序條件，預設ID由大到小
             // 使用 Model orderBy 方法加入 sql 語法排序條件，依照 ID 由大到小排序
-            $query->orderBy('id', 'desc');
+            $query->orderBy('id', 'asc');
         }
 
         $animals = $query->paginate($limit) // 使用分頁方法，最多回傳$limit筆資料
@@ -84,7 +86,10 @@ class AnimalController extends Controller
         // 沒有快取紀錄記住資料，並設定 60 秒過期，快取名稱使用網址命名
         // 快取未過期前都不會使用到資料庫設備資源
         return Cache::remember($fullUrl, 60, function () use ($animals) {
-            return response($animals, Response::HTTP_OK);
+            // return response($animals, Response::HTTP_OK);
+            return (new AnimalCollection($animals))
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
         });
     }
 
