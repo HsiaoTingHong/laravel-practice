@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TypeResource;
+use App\Http\Resources\TypeCollection;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,15 +19,22 @@ class TypeController extends Controller
     public function index()
     {
         // 分類資料量少直接全部輸出
-        $types = Type::get();
+        // $types = Type::get();
 
         // 關聯查詢: 查詢狗狗分類中的所有動物
         // $animals = Type::find('1')->animals;
 
-        return response([
-            'data' => $types // 輸出使用 data 包住
-            // 'data' => $animals // 輸出使用 data 包住
-        ], Response::HTTP_OK);
+        // return response([
+        //     'data' => $types // 輸出使用 data 包住
+        //     // 'data' => $animals // 輸出使用 data 包住
+        // ], Response::HTTP_OK);
+
+        // 產生一個實體物件 TypeCollection，將 $types 分類集合傳入
+        // select 方法只查詢需要的資料，created_at updated_at 不需要的就不用查
+        $types = Type::select('id', 'name', 'sort')->get();
+        return (new TypeCollection($types))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -69,9 +78,12 @@ class TypeController extends Controller
         // 寫入資料庫
         $type = Type::create($request->all());
 
-        return response([
-            'data' => $type
-        ], Response::HTTP_CREATED);
+        // return response([
+        //     'data' => $type
+        // ], Response::HTTP_CREATED);
+        return (new TypeResource($type))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -82,9 +94,12 @@ class TypeController extends Controller
      */
     public function show(Type $type)
     {
-        return response([
-            'data' => $type
-        ], Response::HTTP_OK);
+        // return response([
+        //     'data' => $type
+        // ], Response::HTTP_OK);
+        return (new TypeResource($type))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -120,9 +135,12 @@ class TypeController extends Controller
         // 更新資料
         $type->update($request->all());
 
-        return response([
-            'data' => $type
-        ], Response::HTTP_OK);
+        // return response([
+        //     'data' => $type
+        // ], Response::HTTP_OK);
+        return (new TypeResource($type))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
