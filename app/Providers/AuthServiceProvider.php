@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        // Undefined method 'routes'.intelephense(P1013) - 上網查這個方法已經沒有了，Passport 會自動設定好路由
+        // Passport::routes();
+        // Passport::ignoreRoutes();
 
         //
     }
