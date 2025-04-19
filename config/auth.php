@@ -40,14 +40,6 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        // 需要認證的 api 請求時，系統會使用 Passport 的 Token Guard
-        'api' => [
-            'driver' => 'passport',
-            'provider' => 'users',
-            'hash' => 'false', //這個是Laravel 5.8 出現的，他主要是可以讓 Token 再 SHA-256 保護存入資料表
-            // hash 這裡先不調整，以存文字的方式把Token存入資料表就好！ 如果設定 true 等於存入資料表中的 Token 在 SHA-256 加密保護。
-            // 無法反向解開 Token，請求 Token 時回傳 未加密的 Token，資料表儲存 SHA-256 加密後的副本，所以必須要求客戶端請求Token 後一定要牢牢記住，不然無法解開。另外默認情況下，Passport發放的 Token 是有一年有效期的。
-        ],
     ],
 
     /*
