@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Cache; // 使用 Laravel 的 Cache Facades 功能
 
 class AnimalController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
+
     /**
      * Display a listing of the resource. 查詢資料列表
      *
