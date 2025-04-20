@@ -33,5 +33,12 @@ class AuthServiceProvider extends ServiceProvider
 
         // refresh_token 設定核發後 30 天過期
         Passport::refreshTokensExpireIn(now()->addDay(30));
+
+        // 定義伺服器的 scope
+        Passport::tokensCan([
+            // key 表示 scope 名稱，value 表示 scope 的說明
+            'create-animals' => '建立動物資訊',
+            'user-info' => '使用者資訊',
+        ]);
     }
 }
