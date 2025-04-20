@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Traits\ApiResponseTrait; // 引用特徵
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -91,5 +92,20 @@ class Handler extends ExceptionHandler
         }
 
         return parent::render($request, $exception);
+    }
+
+    // 覆寫例外的回應 (vendor\laravel\framework\src\Illuminate\Foundation\Exceptions\Handler.php)
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        // 客戶端請求 json 格式
+        if ($request->expectsJson()) {
+            return $this->errorResponse(
+                $exception->getMessage(),
+                Response::HTTP_UNAUTHORIZED
+            );
+        } else {
+            // 客戶端非請求 json 格式，轉回登入畫面
+            return redirect()->guest($exception->redirectTo() ?? route('login'));
+        }
     }
 }
